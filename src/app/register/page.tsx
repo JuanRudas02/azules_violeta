@@ -8,17 +8,28 @@ import { useState } from 'react';
 
 export default function RegisterPage() {
     const router = useRouter();
-    const { login } = useAuth();
+    const { register } = useAuth();
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    const handleRegister = (e: React.FormEvent) => {
+    const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setError('');
         setLoading(true);
-        // Simulación de registro exitoso
-        setTimeout(() => {
-            login('user');
-            router.push('/dashboard');
-        }, 1500);
+
+        const formData = new FormData(e.currentTarget);
+        const name = formData.get('name') as string;
+        const email = formData.get('email') as string;
+        const password = formData.get('password') as string;
+        const phone = formData.get('phone') as string;
+
+        try {
+            await register(name, email, password, phone);
+            router.push('/user'); // Redirect to dashboard when successful
+        } catch (err: any) {
+            setError(err.message || 'Error al intentar registrar el usuario.');
+            setLoading(false);
+        }
     };
 
     return (
@@ -75,12 +86,17 @@ export default function RegisterPage() {
                     </div>
 
                     <form onSubmit={handleRegister} className="space-y-6">
+                        {error && (
+                            <div className="bg-red-50 text-red-500 p-4 rounded-2xl text-sm font-bold border border-red-100 text-center">
+                                {error}
+                            </div>
+                        )}
                         <div className="space-y-4">
                             <div>
                                 <label className="block text-sm font-bold text-makeup-brown mb-2 ml-1">Nombre Completo</label>
                                 <div className="relative">
                                     <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                                    <input required type="text" placeholder="Ej: Maria Lopez" className="input-field pl-12" />
+                                    <input required name="name" type="text" placeholder="Ej: Maria Lopez" className="input-field pl-12" />
                                 </div>
                             </div>
 
@@ -88,7 +104,15 @@ export default function RegisterPage() {
                                 <label className="block text-sm font-bold text-makeup-brown mb-2 ml-1">Email</label>
                                 <div className="relative">
                                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                                    <input required type="email" placeholder="tu@email.com" className="input-field pl-12" />
+                                    <input required name="email" type="email" placeholder="tu@email.com" className="input-field pl-12" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-bold text-makeup-brown mb-2 ml-1">Teléfono (opcional)</label>
+                                <div className="relative">
+                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                                    <input name="phone" type="tel" placeholder="Ej: +57 321 000 0000" className="input-field pl-12" />
                                 </div>
                             </div>
 
@@ -96,7 +120,7 @@ export default function RegisterPage() {
                                 <label className="block text-sm font-bold text-makeup-brown mb-2 ml-1">Contraseña</label>
                                 <div className="relative">
                                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                                    <input required type="password" placeholder="••••••••" className="input-field pl-12" />
+                                    <input required name="password" type="password" placeholder="••••••••" className="input-field pl-12" />
                                 </div>
                             </div>
                         </div>
