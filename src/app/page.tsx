@@ -22,7 +22,7 @@ export default function HomePage() {
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-rose-50 px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <img src="/logo.png" alt="Azules Violeta Logo" className="h-10 w-auto" />
+          <img src="https://azulesvioleta.com/cdn/shop/files/logo-2_fda935d7-875c-4e91-8fce-eafcf66116d5.png?v=1745890456&width=80" alt="Azules Violeta Logo" className="h-10 w-auto" />
         </div>
         <div className="flex items-center gap-4">
           <button

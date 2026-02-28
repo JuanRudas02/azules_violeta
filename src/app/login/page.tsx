@@ -48,7 +48,7 @@ export default function LoginPage() {
             >
                 <div className="text-center mb-10">
                     <div className="flex justify-center mb-6">
-                        <img src="/logo.png" alt="Azules Violeta Logo" className="h-24 w-auto drop-shadow-lg" />
+                        <img src="https://azulesvioleta.com/cdn/shop/files/logo-2_fda935d7-875c-4e91-8fce-eafcf66116d5.png?v=1745890456&width=80" alt="Azules Violeta Logo" className="h-24 w-auto drop-shadow-lg" />
                     </div>
                     <p className="text-gray-500 font-medium">Log In a tu espacio de belleza</p>
                 </div>
