@@ -4,6 +4,7 @@ import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import {
     LayoutDashboard,
+    Layout,
     Settings,
     UserCircle,
     LogOut,
@@ -38,6 +39,7 @@ export const AppShell = ({ children }: AppShellProps) => {
         { label: 'Dashboard', icon: LayoutDashboard, href: '/admin' },
         { label: 'Usuarios', icon: UserCircle, href: '/admin/users' },
         { label: 'Contenido', icon: Bell, href: '/admin/news' },
+        { label: 'Sitio Web', icon: Layout, href: '/admin/cms' },
         { label: 'Facturas', icon: Ticket, href: '/admin/validate' },
         { label: 'Configuración', icon: Settings, href: '/admin/config' },
     ] : [

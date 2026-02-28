@@ -2,11 +2,20 @@
 
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { ShoppingBag, UserCircle, Star, Sparkles, Heart, ArrowRight } from 'lucide-react';
+import { useHomeContent } from '@/features/home/hooks/useHomeContent';
+import * as LucideIcons from 'lucide-react';
 import { LeadMagnet } from '@/shared/components/ui/LeadMagnet';
 
 export default function HomePage() {
   const router = useRouter();
+  const { content, loading } = useHomeContent();
+
+  const getIcon = (name: string) => {
+    const Icon = (LucideIcons as any)[name] || LucideIcons.HelpCircle;
+    return <Icon className="text-primary mb-6" size={40} />;
+  };
+
+  if (loading) return null;
 
   return (
     <div className="min-h-screen bg-white">
@@ -14,7 +23,7 @@ export default function HomePage() {
       <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-rose-50 px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <Heart size={18} className="text-white" />
+            <LucideIcons.Heart size={18} className="text-white" />
           </div>
           <span className="font-bold text-primary text-xl tracking-tight">Azules Violeta</span>
         </div>
@@ -23,14 +32,14 @@ export default function HomePage() {
             onClick={() => window.open('https://azulesvioleta.com/', '_blank')}
             className="hidden md:flex items-center gap-2 text-makeup-brown font-semibold hover:text-primary transition-colors"
           >
-            <ShoppingBag size={20} />
+            <LucideIcons.ShoppingBag size={20} />
             Tienda
           </button>
           <button
             onClick={() => router.push('/login')}
             className="bg-primary text-white px-6 py-2 rounded-xl font-bold flex items-center gap-2 hover:scale-105 transition-all shadow-lg shadow-primary/20"
           >
-            <UserCircle size={20} />
+            <LucideIcons.UserCircle size={20} />
             Mi Cuenta
           </button>
         </div>
@@ -48,16 +57,16 @@ export default function HomePage() {
             className="space-y-8"
           >
             <div className="inline-flex items-center gap-2 bg-rose-50 text-rose-500 px-4 py-2 rounded-full text-sm font-bold border border-rose-100">
-              <Sparkles size={16} />
-              <span>Nueva Colección de Maquillaje</span>
+              <LucideIcons.Sparkles size={16} />
+              <span>{content.hero.badge}</span>
             </div>
 
             <h1 className="text-6xl md:text-7xl font-black text-makeup-brown leading-[1.1] tracking-tight">
-              Realza tu <span className="text-primary italic">belleza</span> natural con Azules Violeta
+              {content.hero.title}
             </h1>
 
             <p className="text-lg text-gray-500 max-w-lg leading-relaxed">
-              Únete a nuestra comunidad exclusiva, acumula puntos con cada compra y accede a tutoriales premium de maquillaje.
+              {content.hero.subtitle}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
@@ -66,7 +75,7 @@ export default function HomePage() {
                 className="btn-primary group"
               >
                 Comenzar ahora
-                <ArrowRight className="inline ml-2 transition-transform group-hover:translate-x-1" />
+                <LucideIcons.ArrowRight className="inline ml-2 transition-transform group-hover:translate-x-1" />
               </button>
               <button
                 onClick={() => window.open('https://azulesvioleta.com/', '_blank')}
@@ -87,7 +96,7 @@ export default function HomePage() {
               <div>
                 <p className="font-bold text-makeup-brown">+2,000 Chicas Violeta</p>
                 <div className="flex text-accent">
-                  {[1, 2, 3, 4, 5].map((i) => <Star key={i} size={14} fill="currentColor" />)}
+                  {[1, 2, 3, 4, 5].map((i) => <LucideIcons.Star key={i} size={14} fill="currentColor" />)}
                 </div>
               </div>
             </div>
@@ -101,7 +110,7 @@ export default function HomePage() {
           >
             <div className="relative rounded-[3rem] overflow-hidden shadow-2xl border-[12px] border-white active:scale-[0.98] transition-all">
               <img
-                src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                src={content.hero.imageUrl}
                 alt="Beauty Products"
                 className="w-full h-full object-cover"
               />
@@ -115,7 +124,7 @@ export default function HomePage() {
               className="absolute -bottom-6 -left-6 bg-white p-6 rounded-3xl shadow-2xl border border-rose-50 flex items-center gap-4 max-w-[240px]"
             >
               <div className="w-12 h-12 bg-accent/20 rounded-2xl flex items-center justify-center text-accent">
-                <Star size={24} fill="currentColor" />
+                <LucideIcons.Star size={24} fill="currentColor" />
               </div>
               <div>
                 <p className="font-black text-primary text-xl">500</p>
@@ -135,19 +144,15 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { title: 'Comunidad', desc: 'Noticias y tutoriales exclusivos.', icon: Heart, grad: 'from-pink-100 to-rose-50' },
-              { title: 'Premios', desc: 'Canjea tus puntos por productos.', icon: Sparkles, grad: 'from-violet-100 to-primary/5' },
-              { title: 'Eventos', desc: 'Clases en vivo y lanzamientos.', icon: UserCircle, grad: 'from-accent/10 to-transparent' },
-            ].map((feature, i) => (
+            {content.features.map((feature, i) => (
               <motion.div
                 key={i}
                 whileHover={{ y: -5 }}
-                className={`p-8 rounded-[2.5rem] bg-gradient-to-br ${feature.grad} border border-white/50 shadow-xl shadow-rose-900/5`}
+                className={`p-8 rounded-[2.5rem] bg-gradient-to-br ${feature.gradient} border border-white/50 shadow-xl shadow-rose-900/5`}
               >
-                <feature.icon className="text-primary mb-6" size={40} />
+                {getIcon(feature.icon)}
                 <h3 className="text-2xl font-bold text-makeup-brown mb-2">{feature.title}</h3>
-                <p className="text-gray-500 leading-relaxed">{feature.desc}</p>
+                <p className="text-gray-500 leading-relaxed">{feature.description}</p>
               </motion.div>
             ))}
           </div>
