@@ -16,17 +16,28 @@ export const useAuth = () => {
         setLoading(false);
     }, []);
 
-    const login = (role: Role) => {
+    const login = async (email: string, password?: string) => {
+        // Simulación de llamada a API (Railway)
+        // const response = await fetch(API_CONFIG.BASE_URL + '/auth/login', { ... })
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        const role: Role = email === 'admin@azulesvioleta.com' ? 'admin' : 'user';
+
+        if (email === 'error@test.com') {
+            throw new Error("Credenciales inválidas");
+        }
+
         const mockUser: User = {
             id: '1',
             name: role === 'admin' ? 'Administradora Violeta' : 'Cliente Especial',
-            email: role === 'admin' ? 'admin@azulesvioleta.com' : 'usuario@cliente.com',
+            email: email,
             role,
             points: role === 'admin' ? 0 : 500,
         };
         setUser(mockUser);
         localStorage.setItem('auth_user', JSON.stringify(mockUser));
         document.cookie = `auth_role=${role}; path=/`;
+        return role;
     };
 
     const logout = () => {
