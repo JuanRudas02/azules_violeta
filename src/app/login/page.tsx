@@ -47,14 +47,9 @@ export default function LoginPage() {
                 className="w-full max-w-md z-10"
             >
                 <div className="text-center mb-10">
-                    <div className="flex justify-center mb-4">
-                        <div className="bg-primary p-4 rounded-3xl shadow-xl shadow-primary/30">
-                            <Sparkles className="text-white w-12 h-12" />
-                        </div>
+                    <div className="flex justify-center mb-6">
+                        <img src="/logo.png" alt="Azules Violeta Logo" className="h-24 w-auto drop-shadow-lg" />
                     </div>
-                    <h1 className="text-4xl font-extrabold text-primary tracking-tight mb-2">
-                        Azules Violeta
-                    </h1>
                     <p className="text-gray-500 font-medium">Log In a tu espacio de belleza</p>
                 </div>
 

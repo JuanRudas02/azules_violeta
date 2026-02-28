@@ -22,10 +22,7 @@ export default function HomePage() {
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-rose-50 px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <LucideIcons.Heart size={18} className="text-white" />
-          </div>
-          <span className="font-bold text-primary text-xl tracking-tight">Azules Violeta</span>
+          <img src="/logo.png" alt="Azules Violeta Logo" className="h-10 w-auto" />
         </div>
         <div className="flex items-center gap-4">
           <button

@@ -55,10 +55,7 @@ export const AppShell = ({ children }: AppShellProps) => {
             {/* Mobile Header */}
             <div className="md:hidden bg-white border-b border-gray-100 p-4 flex justify-between items-center sticky top-0 z-30">
                 <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                        <Crown size={18} className="text-white" />
-                    </div>
-                    <span className="font-bold text-primary">Azules Violeta</span>
+                    <img src="/logo.png" alt="Azules Violeta Logo" className="h-8 w-auto" />
                 </div>
                 <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2">
                     {isMenuOpen ? <X /> : <Menu />}
@@ -70,11 +67,8 @@ export const AppShell = ({ children }: AppShellProps) => {
                 "fixed inset-0 z-40 bg-white md:relative md:flex md:w-64 flex-col p-6 border-r border-gray-100 transition-transform duration-300",
                 isMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
             )}>
-                <div className="hidden md:flex items-center gap-3 mb-12">
-                    <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-                        <Crown size={22} className="text-white" />
-                    </div>
-                    <span className="font-bold text-xl text-primary tracking-tight">Azules Violeta</span>
+                <div className="hidden md:flex items-center justify-center mb-12">
+                    <img src="/logo.png" alt="Azules Violeta Logo" className="h-12 w-auto" />
                 </div>
 
                 <nav className="flex-1 space-y-2">
