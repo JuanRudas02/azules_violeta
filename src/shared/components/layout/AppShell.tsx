@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import {
     LayoutDashboard,
     Layout,
@@ -28,6 +28,7 @@ interface AppShellProps {
 export const AppShell = ({ children }: AppShellProps) => {
     const { user, logout, isAdmin } = useAuth();
     const router = useRouter();
+    const pathname = usePathname();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const handleLogout = () => {
@@ -35,7 +36,9 @@ export const AppShell = ({ children }: AppShellProps) => {
         router.push('/login');
     };
 
-    const navItems = isAdmin ? [
+    const isAdminMode = isAdmin || pathname?.startsWith('/admin');
+
+    const navItems = isAdminMode ? [
         { label: 'Dashboard', icon: LayoutDashboard, href: '/admin' },
         { label: 'Usuarios', icon: UserCircle, href: '/admin/users' },
         { label: 'Contenido', icon: Bell, href: '/admin/news' },

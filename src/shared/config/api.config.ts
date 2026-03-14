@@ -1,6 +1,6 @@
 export const API_CONFIG = {
-    // URL principal del Backend API (Prisma/PostgreSQL + Railway)
-    BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'https://azulesvioleta-back-production-4fa0.up.railway.app/api',
+    // En Next.js, si el backend está en el mismo proyecto, '/api' es suficiente
+    BASE_URL: '/api',
     ENDPOINTS: {
         AUTH_REGISTER: '/auth/register',
         AUTH_LOGIN: '/auth/login',

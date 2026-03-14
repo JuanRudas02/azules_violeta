@@ -51,15 +51,18 @@ export default function AdminConfigPage() {
                             { label: 'Notificaciones', icon: Bell, active: false },
                             { label: 'Seguridad', icon: Lock, active: false },
                             { label: 'Personalización', icon: Globe, active: false },
-                        ].map((tab) => (
-                            <button
-                                key={tab.label}
-                                className={`w-full flex items-center gap-3 p-4 rounded-2xl font-bold text-sm transition-all ${tab.active ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:bg-rose-50'}`}
-                            >
-                                <tab.icon size={18} />
-                                {tab.label}
-                            </button>
-                        ))}
+                        ].map((tab) => {
+                            const Icon = tab.icon;
+                            return (
+                                <button
+                                    key={tab.label}
+                                    className={`w-full flex items-center gap-3 p-4 rounded-2xl font-bold text-sm transition-all ${tab.active ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-gray-400 hover:bg-rose-50'}`}
+                                >
+                                    <Icon size={18} />
+                                    {tab.label}
+                                </button>
+                            )
+                        })}
                     </div>
 
                     {/* Form Content */}

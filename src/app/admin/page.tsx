@@ -18,8 +18,10 @@ import {
     Filter,
     BarChart3
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function AdminDashboard() {
+    const router = useRouter();
     const stats = [
         { label: 'Clientes Registrados', value: '1,284', icon: Users, color: 'text-blue-500', bg: 'bg-blue-50', trend: '+5% este mes' },
         { label: 'Facturas Pendientes', value: '38', icon: Ticket, color: 'text-amber-500', bg: 'bg-amber-50', trend: 'Acción requerida' },
@@ -214,6 +216,7 @@ export default function AdminDashboard() {
                 {/* Floating Action Buttons */}
                 <div className="fixed bottom-8 right-8 flex flex-col gap-4 z-50">
                     <motion.button
+                        onClick={() => router.push('/admin/news')}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         className="flex items-center gap-3 bg-white text-primary p-4 pr-6 rounded-2xl shadow-2xl border border-primary/10 font-bold group"
@@ -225,6 +228,7 @@ export default function AdminDashboard() {
                     </motion.button>
 
                     <motion.button
+                        onClick={() => router.push('/admin/cms')}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         className="flex items-center gap-3 bg-primary text-white p-4 pr-6 rounded-2xl shadow-2xl shadow-primary/30 font-bold group"
