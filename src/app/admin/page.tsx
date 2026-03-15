@@ -34,13 +34,23 @@ export default function AdminDashboard() {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                const token = localStorage.getItem('auth_token');
+                const headers: HeadersInit = token
+                    ? { 'Authorization': `Bearer ${token}` }
+                    : {};
+
                 const [statsRes, invoicesRes] = await Promise.all([
-                    fetch('/api/admin/stats'),
-                    fetch('/api/admin/invoices/pending')
+                    fetch('/api/admin/stats', { headers }),
+                    fetch('/api/admin/invoices/pending', { headers })
                 ]);
-                const stats = await statsRes.json();
-                const invoices = await invoicesRes.json();
-                setDashboardData({ stats, pendingInvoices: invoices });
+
+                if (statsRes.ok && invoicesRes.ok) {
+                    const stats = await statsRes.json();
+                    const invoices = await invoicesRes.json();
+                    setDashboardData({ stats, pendingInvoices: Array.isArray(invoices) ? invoices : [] });
+                } else {
+                    console.error('Failed to fetch admin data, status:', statsRes.status);
+                }
             } catch (error) {
                 console.error('Error fetching dashboard data:', error);
             }
