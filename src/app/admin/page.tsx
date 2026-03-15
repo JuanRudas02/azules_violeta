@@ -19,14 +19,40 @@ import {
     BarChart3
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function AdminDashboard() {
     const router = useRouter();
+    const [dashboardData, setDashboardData] = useState<{
+        stats: { userCount: number; pendingInvoices: number; totalPoints: number; totalTransactions: number };
+        pendingInvoices: any[];
+    }>({
+        stats: { userCount: 0, pendingInvoices: 0, totalPoints: 0, totalTransactions: 0 },
+        pendingInvoices: []
+    });
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [statsRes, invoicesRes] = await Promise.all([
+                    fetch('/api/admin/stats'),
+                    fetch('/api/admin/invoices/pending')
+                ]);
+                const stats = await statsRes.json();
+                const invoices = await invoicesRes.json();
+                setDashboardData({ stats, pendingInvoices: invoices });
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+            }
+        };
+        fetchData();
+    }, []);
+
     const stats = [
-        { label: 'Clientes Registrados', value: '1,284', icon: Users, color: 'text-blue-500', bg: 'bg-blue-50', trend: '+5% este mes' },
-        { label: 'Facturas Pendientes', value: '38', icon: Ticket, color: 'text-amber-500', bg: 'bg-amber-50', trend: 'Acción requerida' },
-        { label: 'Cupones Copiados', value: '452', icon: Copy, color: 'text-primary', bg: 'bg-violet-50', trend: '+12% hoy' },
-        { label: 'Clics en Tienda', value: '1,020', icon: MousePointer2, color: 'text-green-500', bg: 'bg-green-50', trend: '+18% esta semana' },
+        { label: 'Clientes Registrados', value: dashboardData.stats.userCount.toString(), icon: Users, color: 'text-blue-500', bg: 'bg-blue-50', trend: 'Actualizado' },
+        { label: 'Facturas Pendientes', value: dashboardData.stats.pendingInvoices.toString(), icon: Ticket, color: 'text-amber-500', bg: 'bg-amber-50', trend: 'Acción requerida' },
+        { label: 'Puntos Emitidos', value: dashboardData.stats.totalPoints.toLocaleString(), icon: Copy, color: 'text-primary', bg: 'bg-violet-50', trend: 'Total histórico' },
+        { label: 'Interacciones', value: dashboardData.stats.totalTransactions.toString(), icon: MousePointer2, color: 'text-green-500', bg: 'bg-green-50', trend: 'Total eventos' },
     ];
 
     return (
@@ -92,35 +118,53 @@ export default function AdminDashboard() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-rose-50">
-                                    {[1, 2, 3, 4].map((item) => (
-                                        <tr key={item} className="hover:bg-violet-50/30 transition-colors group">
-                                            <td className="px-8 py-5">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 bg-rose-50 rounded-full flex items-center justify-center font-bold text-xs text-primary">AV</div>
-                                                    <div>
-                                                        <p className="text-sm font-bold text-makeup-brown leading-none">Lucía Morales</p>
-                                                        <p className="text-[10px] text-gray-400 mt-1">lucia.m@gmail.com</p>
+                                    {dashboardData.pendingInvoices.length > 0 ? (
+                                        dashboardData.pendingInvoices.map((invoice) => (
+                                            <tr key={invoice.id} className="hover:bg-violet-50/30 transition-colors group">
+                                                <td className="px-8 py-5">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-10 h-10 bg-rose-50 rounded-full flex items-center justify-center font-bold text-xs text-primary">
+                                                            {invoice.user.name.substring(0, 2).toUpperCase()}
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-sm font-bold text-makeup-brown leading-none">{invoice.user.name}</p>
+                                                            <p className="text-[10px] text-gray-400 mt-1">{invoice.user.email}</p>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-5">
-                                                <span className="text-xs font-mono font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">VIO-882{item}</span>
-                                            </td>
-                                            <td className="px-8 py-5">
-                                                <span className="text-[10px] font-black bg-amber-100 text-amber-600 px-3 py-1 rounded-full uppercase tracking-widest">Revision</span>
-                                            </td>
-                                            <td className="px-8 py-5">
-                                                <div className="flex gap-2">
-                                                    <button className="p-2 bg-green-500 text-white rounded-xl shadow-lg shadow-green-500/20 hover:scale-110 transition-transform">
-                                                        <Check size={16} />
-                                                    </button>
-                                                    <button className="p-2 bg-rose-500 text-white rounded-xl shadow-lg shadow-rose-500/20 hover:scale-110 transition-transform">
-                                                        <X size={16} />
-                                                    </button>
-                                                </div>
+                                                </td>
+                                                <td className="px-8 py-5">
+                                                    <span className="text-xs font-mono font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                                        {invoice.id.substring(0, 8).toUpperCase()}
+                                                    </span>
+                                                </td>
+                                                <td className="px-8 py-5">
+                                                    <span className="text-[10px] font-black bg-amber-100 text-amber-600 px-3 py-1 rounded-full uppercase tracking-widest">Revision</span>
+                                                </td>
+                                                <td className="px-8 py-5">
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            onClick={() => router.push(`/admin/validate?id=${invoice.id}`)}
+                                                            className="p-2 bg-green-500 text-white rounded-xl shadow-lg shadow-green-500/20 hover:scale-110 transition-transform"
+                                                        >
+                                                            <Check size={16} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => router.push(`/admin/validate?id=${invoice.id}`)}
+                                                            className="p-2 bg-rose-500 text-white rounded-xl shadow-lg shadow-rose-500/20 hover:scale-110 transition-transform"
+                                                        >
+                                                            <X size={16} />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={4} className="px-8 py-10 text-center text-gray-400 font-medium">
+                                                No hay facturas pendientes de validación.
                                             </td>
                                         </tr>
-                                    ))}
+                                    )}
                                 </tbody>
                             </table>
                         </div>
@@ -140,52 +184,18 @@ export default function AdminDashboard() {
                             </div>
                         </div>
 
-                        <div className="p-8 space-y-6">
-                            {[
-                                { name: 'Cupón Bienvenida 500', copyCount: 120, conversion: '85%', color: 'bg-primary' },
-                                { name: 'Descuento Labiales 20%', copyCount: 84, conversion: '42%', color: 'bg-accent' },
-                                { name: 'Guía Cuidado Piel', copyCount: 210, conversion: '94%', color: 'bg-rose-500' },
-                            ].map((promo) => (
-                                <div key={promo.name} className="space-y-2">
-                                    <div className="flex justify-between items-end">
-                                        <span className="text-sm font-bold text-makeup-brown">{promo.name}</span>
-                                        <span className="text-[10px] font-black text-primary uppercase tracking-widest">{promo.copyCount} copias</span>
-                                    </div>
-                                    <div className="h-2.5 bg-rose-50 rounded-full overflow-hidden">
-                                        <motion.div
-                                            initial={{ width: 0 }}
-                                            animate={{ width: promo.conversion }}
-                                            className={`h-full ${promo.color} rounded-full`}
-                                        />
-                                    </div>
-                                    <p className="text-[10px] text-gray-400 font-bold text-right italic">Efectividad del {promo.conversion}</p>
-                                </div>
-                            ))}
+                        <div className="p-8">
+                            <div className="flex flex-col items-center justify-center py-12 text-center gap-3">
+                                <BarChart3 size={40} className="text-rose-200" />
+                                <p className="text-gray-500 font-bold">Sin datos de promociones aún</p>
+                                <p className="text-xs text-gray-400">Las estadísticas aparecerán cuando los clientes interactúen con las promociones.</p>
+                            </div>
                         </div>
 
                         <div className="px-8 pb-8 pt-4">
                             <div className="bg-secondary/30 p-6 rounded-3xl border border-rose-50">
                                 <h3 className="text-xs font-black text-primary uppercase tracking-widest mb-4">Actividad Reciente</h3>
-                                <div className="space-y-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center text-primary shadow-sm">
-                                            <Copy size={14} />
-                                        </div>
-                                        <p className="text-xs text-gray-500">
-                                            <span className="font-bold text-makeup-brown">Lorena P.</span> copió el código <span className="text-primary font-bold">VIOLETA20</span>
-                                        </p>
-                                        <span className="ml-auto text-[10px] text-gray-300 font-bold">12m ago</span>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center text-green-500 shadow-sm">
-                                            <ShoppingBag size={14} />
-                                        </div>
-                                        <p className="text-xs text-gray-500">
-                                            <span className="font-bold text-makeup-brown">Carolina S.</span> visitó la tienda desde el dashboard
-                                        </p>
-                                        <span className="ml-auto text-[10px] text-gray-300 font-bold">45m ago</span>
-                                    </div>
-                                </div>
+                                <p className="text-xs text-gray-400 text-center py-4">La actividad en tiempo real aparecerá aquí cuando los clientes interactúen con la plataforma.</p>
                             </div>
                         </div>
                     </section>
@@ -201,15 +211,10 @@ export default function AdminDashboard() {
                         <BarChart3 className="text-accent w-12 h-12 opacity-50" />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                        {[1, 2, 3, 4].map((i) => (
-                            <div key={i} className="relative pl-8 border-l border-white/10 space-y-2">
-                                <div className="absolute left-[-5px] top-0 w-2.5 h-2.5 bg-accent rounded-full shadow-[0_0_10px_#FBBF24]" />
-                                <p className="text-[10px] font-black text-accent uppercase tracking-widest">Hace {i * 15} minutos</p>
-                                <p className="font-bold text-sm">Nuevo Registro Completo</p>
-                                <p className="text-xs text-gray-400">Cliente #882{i} ha completado su perfil y reclamado sus 500 puntos.</p>
-                            </div>
-                        ))}
+                    <div className="flex flex-col items-center justify-center py-12 text-center gap-3 opacity-60">
+                        <Calendar size={48} className="text-accent" />
+                        <p className="font-bold text-white">¡El sistema está listo!</p>
+                        <p className="text-rose-200/70 text-sm">Los eventos de clientes aparecerán aquí en tiempo real a medida que se registren e interactúen con la plataforma.</p>
                     </div>
                 </section>
 
