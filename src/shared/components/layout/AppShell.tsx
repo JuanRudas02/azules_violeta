@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/shared/utils/cn';
+import Image from 'next/image';
 
 interface AppShellProps {
     children: React.ReactNode;
@@ -58,7 +59,14 @@ export const AppShell = ({ children }: AppShellProps) => {
             {/* Mobile Header */}
             <div className="md:hidden bg-white border-b border-gray-100 p-4 flex justify-between items-center sticky top-0 z-30">
                 <div className="flex items-center gap-2">
-                    <img src="https://azulesvioleta.com/cdn/shop/files/logo-2_fda935d7-875c-4e91-8fce-eafcf66116d5.png?v=1745890456&width=80" alt="Azules Violeta Logo" className="h-8 w-auto" />
+                    <Image
+                        src="https://azulesvioleta.com/cdn/shop/files/logo-2_fda935d7-875c-4e91-8fce-eafcf66116d5.png?v=1745890456&width=80"
+                        alt="Azules Violeta Logo"
+                        width={80}
+                        height={32}
+                        className="h-8 w-auto priority"
+                        priority
+                    />
                 </div>
                 <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2">
                     {isMenuOpen ? <X /> : <Menu />}
@@ -71,7 +79,14 @@ export const AppShell = ({ children }: AppShellProps) => {
                 isMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
             )}>
                 <div className="hidden md:flex items-center justify-center mb-12">
-                    <img src="https://azulesvioleta.com/cdn/shop/files/logo-2_fda935d7-875c-4e91-8fce-eafcf66116d5.png?v=1745890456&width=80" alt="Azules Violeta Logo" className="h-12 w-auto" />
+                    <Image
+                        src="https://azulesvioleta.com/cdn/shop/files/logo-2_fda935d7-875c-4e91-8fce-eafcf66116d5.png?v=1745890456&width=80"
+                        alt="Azules Violeta Logo"
+                        width={120}
+                        height={48}
+                        className="h-12 w-auto"
+                        priority
+                    />
                 </div>
 
                 <nav className="flex-1 space-y-2">

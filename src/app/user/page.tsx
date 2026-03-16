@@ -7,6 +7,7 @@ import { Sparkles, Heart, Star, ShoppingBag, Bell, Ticket } from 'lucide-react';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import { useContent } from '@/features/news/hooks/useContent';
+import Image from 'next/image';
 
 export default function UserDashboard() {
     const { user } = useAuth();
@@ -91,10 +92,13 @@ export default function UserDashboard() {
 
                         {/* Banner Promo */}
                         <div className="relative h-64 rounded-[3rem] overflow-hidden group cursor-pointer" onClick={() => router.push('/user/news')}>
-                            <img
+                            <Image
                                 src="https://images.unsplash.com/photo-1596462502278-27bfdc4033c8?auto=format&fit=crop&w=1200&q=80"
                                 alt="Promo"
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                fill
+                                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                                sizes="(max-width: 1024px) 100vw, 66vw"
+                                priority
                             />
                             <div className="absolute inset-0 bg-gradient-to-r from-makeup-brown/80 to-transparent flex flex-col justify-center p-12">
                                 <p className="text-accent font-black uppercase tracking-widest text-sm mb-2">Comunidad</p>

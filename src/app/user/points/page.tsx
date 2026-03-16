@@ -5,6 +5,7 @@ import { useContent } from '@/features/news/hooks/useContent';
 import { motion } from 'framer-motion';
 import { Tag, Sparkles, Copy, Check, Loader2 } from 'lucide-react';
 import { useState } from 'react';
+import Image from 'next/image';
 
 export default function PromotionsPage() {
     const { posts, loading } = useContent('PROMOTION');
@@ -54,7 +55,13 @@ export default function PromotionsPage() {
                                     {/* Image Header */}
                                     <div className="h-48 relative overflow-hidden bg-secondary">
                                         {promo.imageUrl ? (
-                                            <img src={promo.imageUrl} alt={promo.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                            <Image
+                                                src={promo.imageUrl}
+                                                alt={promo.title}
+                                                fill
+                                                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                                sizes="(max-width: 768px) 100vw, 33vw"
+                                            />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center text-rose-200">
                                                 <Tag size={64} />

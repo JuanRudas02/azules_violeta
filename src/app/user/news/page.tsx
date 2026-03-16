@@ -4,6 +4,7 @@ import { AppShell } from '@/shared/components/layout/AppShell';
 import { useContent } from '@/features/news/hooks/useContent';
 import { motion } from 'framer-motion';
 import { Heart, MessageCircle, Share2, Calendar, Megaphone, Loader2 } from 'lucide-react';
+import Image from 'next/image';
 
 export default function CommunityPage() {
     const { posts, loading, reactToPost } = useContent('NEWS');
@@ -45,8 +46,14 @@ export default function CommunityPage() {
                                     className="bg-white rounded-[3rem] border border-rose-100 shadow-2xl shadow-rose-900/5 overflow-hidden flex flex-col md:flex-row"
                                 >
                                     {item.imageUrl && (
-                                        <div className="md:w-2/5 h-64 md:h-auto overflow-hidden">
-                                            <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
+                                        <div className="md:w-2/5 h-64 md:h-auto overflow-hidden relative">
+                                            <Image
+                                                src={item.imageUrl}
+                                                alt={item.title}
+                                                fill
+                                                className="object-cover transition-transform duration-700 hover:scale-110"
+                                                sizes="(max-width: 768px) 100vw, 40vw"
+                                            />
                                         </div>
                                     )}
                                     <div className="p-10 flex-1 space-y-6">
