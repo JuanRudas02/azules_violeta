@@ -6,15 +6,20 @@ import { motion } from 'framer-motion';
 import { Sparkles, Heart, Star, ShoppingBag, Bell, Ticket } from 'lucide-react';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useRouter } from 'next/navigation';
+import { useContent } from '@/features/news/hooks/useContent';
 
 export default function UserDashboard() {
     const { user } = useAuth();
     const router = useRouter();
+    const { posts: allContent } = useContent();
+
+    const newsCount = allContent.filter(p => p.type === 'NEWS').length;
+    const promoCount = allContent.filter(p => p.type === 'PROMOTION').length;
 
     const stats = [
         { label: 'Mis Puntos', value: user?.points.toLocaleString(), icon: Star, color: 'text-accent', bg: 'bg-accent/10', href: '/user/wallet' },
-        { label: 'Promociones', value: '3 Activas', icon: Ticket, color: 'text-rose-500', bg: 'bg-rose-50', href: '/user/points' },
-        { label: 'Novedades', value: '2 Nuevas', icon: Bell, color: 'text-primary', bg: 'bg-primary/10', href: '/user/news' },
+        { label: 'Promociones', value: `${promoCount} Activas`, icon: Ticket, color: 'text-rose-500', bg: 'bg-rose-50', href: '/user/points' },
+        { label: 'Novedades', value: `${newsCount} Nuevas`, icon: Bell, color: 'text-primary', bg: 'bg-primary/10', href: '/user/news' },
     ];
 
     return (
@@ -74,12 +79,12 @@ export default function UserDashboard() {
                                 <div className="bg-secondary/50 p-6 rounded-[2.5rem] border border-rose-100">
                                     <Heart className="text-rose-500 mb-2" size={24} />
                                     <p className="font-bold text-makeup-brown">Club Benefit</p>
-                                    <p className="text-sm text-gray-500 mt-1">Ganas 10 puntos extra por cada $10.000 en compras.</p>
+                                    <p className="text-sm text-gray-500 mt-1">Ganas puntos por cada compra registrada.</p>
                                 </div>
                                 <div className="bg-primary/5 p-6 rounded-[2.5rem] border border-primary/10">
                                     <Sparkles className="text-primary mb-2" size={24} />
                                     <p className="font-bold text-makeup-brown">Guía Gratuita</p>
-                                    <p className="text-sm text-gray-500 mt-1">Tu guía de cuidado facial ya está disponible en tu correo.</p>
+                                    <p className="text-sm text-gray-500 mt-1">Nuevos tips de belleza disponibles en la sección de Novedades.</p>
                                 </div>
                             </div>
                         </div>
@@ -92,10 +97,10 @@ export default function UserDashboard() {
                                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                             />
                             <div className="absolute inset-0 bg-gradient-to-r from-makeup-brown/80 to-transparent flex flex-col justify-center p-12">
-                                <p className="text-accent font-black uppercase tracking-widest text-sm mb-2">Editor's Choice</p>
-                                <h3 className="text-3xl font-black text-white max-w-sm leading-tight">Secretos del Maquillaje de Ojos</h3>
+                                <p className="text-accent font-black uppercase tracking-widest text-sm mb-2">Comunidad</p>
+                                <h3 className="text-3xl font-black text-white max-w-sm leading-tight">Explora las últimas tendencias</h3>
                                 <button className="mt-6 text-white text-sm font-bold flex items-center gap-2 hover:underline">
-                                    Leer artículo completo →
+                                    Ver todas las novedades →
                                 </button>
                             </div>
                         </div>

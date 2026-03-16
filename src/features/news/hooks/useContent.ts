@@ -1,67 +1,85 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export interface Post {
     id: string;
-    type: 'news' | 'promotion';
+    type: 'NEWS' | 'PROMOTION';
     title: string;
     content: string;
-    image?: string;
-    date: string;
-    expiryDate?: string;
-    discountCode?: string;
+    imageUrl?: string;
+    metadata?: string;
+    createdAt: string;
 }
 
-export const useContent = () => {
+export const useContent = (type?: 'NEWS' | 'PROMOTION') => {
     const [posts, setPosts] = useState<Post[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchPosts = useCallback(async () => {
+        try {
+            setLoading(true);
+            const url = type ? `/api/content?type=${type}` : '/api/content';
+            const res = await fetch(url);
+            if (res.ok) {
+                const data = await res.json();
+                setPosts(data);
+            }
+        } catch (error) {
+            console.error('Error fetching content:', error);
+        } finally {
+            setLoading(false);
+        }
+    }, [type]);
 
     useEffect(() => {
-        const saved = localStorage.getItem('violeta_content');
-        if (saved) {
-            setPosts(JSON.parse(saved));
-        } else {
-            // Mock inicial
-            const initial: Post[] = [
-                {
-                    id: '1',
-                    type: 'news',
-                    title: 'Nueva Colección Pantone',
-                    content: 'Ya llegó la colección inspirada en los colores del año. Tonos maquillaje puros.',
-                    date: '2026-02-28',
-                    image: 'https://images.unsplash.com/photo-1596462502278-27bfdc4033c8?auto=format&fit=crop&w=400&q=80'
+        fetchPosts();
+    }, [fetchPosts]);
+
+    const addPost = async (post: { type: 'NEWS' | 'PROMOTION', title: string, content: string, imageUrl?: string }) => {
+        try {
+            const token = localStorage.getItem('auth_token');
+            const res = await fetch('/api/content', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
-                {
-                    id: '2',
-                    type: 'promotion',
-                    title: '20% OFF en Bases',
-                    content: 'Usa este código en tu próxima compra de bases de maquillaje.',
-                    date: '2026-02-28',
-                    discountCode: 'VIOLETA20',
-                    image: 'https://images.unsplash.com/photo-1594465919760-441fe5908ab0?auto=format&fit=crop&w=400&q=80'
-                }
-            ];
-            setPosts(initial);
-            localStorage.setItem('violeta_content', JSON.stringify(initial));
+                body: JSON.stringify(post)
+            });
+            if (res.ok) {
+                await fetchPosts();
+                return true;
+            }
+        } catch (error) {
+            console.error('Error adding content:', error);
         }
-    }, []);
-
-    const addPost = (post: Omit<Post, 'id' | 'date'>) => {
-        const newPost: Post = {
-            ...post,
-            id: Date.now().toString(),
-            date: new Date().toISOString().split('T')[0],
-        };
-        const updated = [newPost, ...posts];
-        setPosts(updated);
-        localStorage.setItem('violeta_content', JSON.stringify(updated));
+        return false;
     };
 
-    const deletePost = (id: string) => {
-        const updated = posts.filter(p => p.id !== id);
-        setPosts(updated);
-        localStorage.setItem('violeta_content', JSON.stringify(updated));
+    const reactToPost = async (id: string, action: 'like' | 'view') => {
+        try {
+            const res = await fetch(`/api/content/${id}/react`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action })
+            });
+            if (res.ok) {
+                // Update local state for immediate feedback
+                setPosts(prev => prev.map(p => {
+                    if (p.id === id) {
+                        const meta = JSON.parse(p.metadata || '{"likes":0,"views":0}');
+                        if (action === 'like') meta.likes += 1;
+                        if (action === 'view') meta.views += 1;
+                        return { ...p, metadata: JSON.stringify(meta) };
+                    }
+                    return p;
+                }));
+            }
+        } catch (error) {
+            console.error('Error reacting to content:', error);
+        }
     };
 
-    return { posts, addPost, deletePost };
+    return { posts, loading, fetchPosts, addPost, reactToPost };
 };

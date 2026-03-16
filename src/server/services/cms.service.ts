@@ -16,22 +16,40 @@ export class CmsService {
         return response;
     }
 
-    async updateHomeContent(data: Record<string, string>) {
-        const updates = [];
+    async getContentItems(type?: 'NEWS' | 'PROMOTION') {
+        return await prisma.contentItem.findMany({
+            where: {
+                type,
+                isActive: true,
+            },
+            orderBy: { createdAt: 'desc' },
+        });
+    }
 
-        for (const [key, value] of Object.entries(data)) {
-            updates.push(
-                prisma.systemConfig.upsert({
-                    where: { key },
-                    update: { value: String(value) },
-                    create: { key, value: String(value) },
-                })
-            );
-        }
+    async addContentItem(data: { type: 'NEWS' | 'PROMOTION', title: string, content: string, imageUrl?: string, metadata?: string }) {
+        return await prisma.contentItem.create({
+            data: {
+                type: data.type as any,
+                title: data.title,
+                content: data.content,
+                imageUrl: data.imageUrl,
+                metadata: data.metadata || JSON.stringify({ likes: 0, views: 0 }),
+            },
+        });
+    }
 
-        await prisma.$transaction(updates);
+    async deleteContentItem(id: string) {
+        return await prisma.contentItem.update({
+            where: { id },
+            data: { isActive: false },
+        });
+    }
 
-        return this.getHomeContent();
+    async updateReactions(id: string, metadata: string) {
+        return await prisma.contentItem.update({
+            where: { id },
+            data: { metadata },
+        });
     }
 }
 
