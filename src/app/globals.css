@@ -58,6 +58,6 @@ body {
   }
 
   .input-field {
-    @apply w-full p-4 rounded-2xl bg-white border border-rose-100 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all;
+    @apply w-full p-4 rounded-2xl bg-white border border-rose-100 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all text-makeup-brown placeholder:text-gray-400 font-medium;
   }
 }

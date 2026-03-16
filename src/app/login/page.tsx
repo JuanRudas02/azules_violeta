@@ -98,7 +98,7 @@ export default function LoginPage() {
                                         type="email"
                                         placeholder="tu@correo.com"
                                         defaultValue="admin@azulesvioleta.com"
-                                        className="w-full pl-14 pr-6 py-5 rounded-[1.5rem] bg-white/70 border-2 border-transparent focus:border-primary/30 focus:bg-white focus:outline-none transition-all shadow-sm shadow-primary/5 placeholder:text-gray-300 font-medium"
+                                        className="input-field pl-14 pr-6 py-5 rounded-[1.5rem] bg-white/70 border-2 border-transparent focus:border-primary/30 focus:bg-white focus:outline-none transition-all shadow-sm shadow-primary/5 placeholder:text-gray-400 font-bold"
                                         required
                                     />
                                 </div>
@@ -118,7 +118,7 @@ export default function LoginPage() {
                                         type="password"
                                         placeholder="••••••••"
                                         defaultValue="123456"
-                                        className="w-full pl-14 pr-6 py-5 rounded-[1.5rem] bg-white/70 border-2 border-transparent focus:border-primary/30 focus:bg-white focus:outline-none transition-all shadow-sm shadow-primary/5 placeholder:text-gray-300 font-medium"
+                                        className="input-field pl-14 pr-6 py-5 rounded-[1.5rem] bg-white/70 border-2 border-transparent focus:border-primary/30 focus:bg-white focus:outline-none transition-all shadow-sm shadow-primary/5 placeholder:text-gray-400 font-bold"
                                         required
                                     />
                                 </div>
