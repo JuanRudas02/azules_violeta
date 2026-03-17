@@ -8,11 +8,32 @@ import { useAuth } from '@/features/auth/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import { useContent } from '@/features/news/hooks/useContent';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 export default function UserDashboard() {
-    const { user } = useAuth();
+    const { user, updateUserPoints } = useAuth();
     const router = useRouter();
     const { posts: allContent } = useContent();
+
+    useEffect(() => {
+        const syncPoints = async () => {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const res = await fetch('/api/users/profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (updateUserPoints) {
+                        updateUserPoints(data.wallet?.balance || 0);
+                    }
+                }
+            } catch (error) {
+                console.error('Error syncing points:', error);
+            }
+        };
+        syncPoints();
+    }, []);
 
     const newsCount = allContent.filter(p => p.type === 'NEWS').length;
     const promoCount = allContent.filter(p => p.type === 'PROMOTION').length;
