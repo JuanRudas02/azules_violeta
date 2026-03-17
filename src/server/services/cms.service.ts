@@ -16,6 +16,17 @@ export class CmsService {
         return response;
     }
 
+    async updateHomeContent(data: Record<string, string>) {
+        const updates = Object.entries(data).map(([key, value]) =>
+            prisma.systemConfig.upsert({
+                where: { key },
+                update: { value },
+                create: { key, value },
+            })
+        );
+        return await prisma.$transaction(updates);
+    }
+
     async getContentItems(type?: 'NEWS' | 'PROMOTION') {
         return await prisma.contentItem.findMany({
             where: {
