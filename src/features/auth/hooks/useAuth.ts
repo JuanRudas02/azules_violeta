@@ -85,5 +85,21 @@ export const useAuth = () => {
         document.cookie = "auth_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
     };
 
-    return { user, loading, login, register, logout, isAdmin: user?.role === 'admin' };
+    const updateUserPoints = (points: number) => {
+        if (user) {
+            const updatedUser = { ...user, points };
+            setUser(updatedUser);
+            localStorage.setItem('auth_user', JSON.stringify(updatedUser));
+        }
+    };
+
+    return {
+        user,
+        loading,
+        login,
+        register,
+        logout,
+        updateUserPoints,
+        isAdmin: user?.role === 'admin'
+    };
 };
