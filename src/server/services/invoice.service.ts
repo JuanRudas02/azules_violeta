@@ -3,6 +3,7 @@ import { supabase } from '../../shared/lib/supabase';
 
 export class InvoiceService {
     async submitInvoice(userId: string, fileBuffer: Buffer, fileName: string, contentType: string, amountSpent: number) {
+        console.log('Submitting invoice for user:', userId);
         const fileExt = fileName.split('.').pop();
         const storageFileName = `${userId}_${Date.now()}.${fileExt}`;
 
@@ -10,24 +11,33 @@ export class InvoiceService {
             .from('invoices')
             .upload(storageFileName, fileBuffer, {
                 contentType,
+                upsert: true
             });
 
         if (error) {
-            throw new Error(`Failed to upload image: ${error.message}`);
+            console.error('Supabase Storage Error:', error);
+            throw new Error(`Error al subir la imagen a Supabase (Bucket: invoices): ${error.message}`);
         }
 
         const { data: publicUrlData } = supabase.storage
             .from('invoices')
             .getPublicUrl(storageFileName);
 
-        return await prisma.invoice.create({
-            data: {
-                userId,
-                imageUrl: publicUrlData.publicUrl,
-                amountSpent,
-                status: 'PENDING',
-            },
-        });
+        console.log('Got public URL:', publicUrlData?.publicUrl);
+
+        try {
+            return await prisma.invoice.create({
+                data: {
+                    userId,
+                    imageUrl: publicUrlData.publicUrl,
+                    amountSpent: amountSpent,
+                    status: 'PENDING',
+                },
+            });
+        } catch (dbError: any) {
+            console.error('Prisma Create Error:', dbError);
+            throw new Error(`Error al guardar en base de datos: ${dbError.message}`);
+        }
     }
 
     async getPendingInvoices(page: number, limit: number) {

@@ -32,8 +32,9 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json(invoice, { status: 201 });
     } catch (error: any) {
+        console.error('Submission Error:', error);
         return NextResponse.json(
-            { message: 'Internal server error', error: error.message },
+            { message: error.message || 'Error interno del servidor' },
             { status: 500 }
         );
     }
